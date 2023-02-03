@@ -1,1 +1,3 @@
 # eRecipes
+
+Django version 4.1.6
