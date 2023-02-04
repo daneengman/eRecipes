@@ -22,11 +22,13 @@ class Diet(models.Model):
 
 
 from django.urls import reverse # Used to generate URLs by reversing the URL patterns
-
+from datetime import date
 import uuid # Required for unique book instances
+from django.db.models.functions import Upper
+import django # could improve this
 class Recipe(models.Model):
     """Model representing a recipe."""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID for this particular recipe across whole library')
+    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID for this particular recipe across whole library')
 
     title = models.CharField(max_length=200)
 
@@ -38,7 +40,7 @@ class Recipe(models.Model):
     # later fields: ingredients (quantities? uniqueness?) last made, rating, personal notes, pictures??? 
     # uploaded, whatever else
 
-    summary = models.TextField(max_length=1000, help_text='Enter a brief description of the recipe')
+    description = models.TextField(max_length=1000, help_text='Enter a brief description of the recipe')
     # isbn = models.CharField('ISBN', max_length=13, unique=True,
     #                          help_text='13 Character <a href="https://www.isbn-international.org/content/what-isbn">ISBN number</a>')
 
@@ -47,8 +49,14 @@ class Recipe(models.Model):
     cuisine = models.ManyToManyField(Cuisine, help_text='Select a cuisine for this recipe')
     diet = models.ManyToManyField(Diet, help_text='Select a diet for this recipe')
 
+    last_made = models.DateField(default=django.utils.timezone.now)
+
+    recipe_photo = models.ImageField(upload_to='static/media/recipes', null=True, blank=True)
+
+    words = models.JSONField(default = None, null=True, blank=True)
+
     class Meta:
-        ordering = ['title']
+        ordering = [Upper('title')]
 
     def __str__(self):
         """String for representing the Model object."""
@@ -65,6 +73,7 @@ class Author(models.Model):
     last_name = models.CharField(max_length=100)
     date_of_birth = models.DateField(null=True, blank=True)
     date_of_death = models.DateField('Died', null=True, blank=True)
+    biography = models.TextField(max_length=1000, help_text='Enter a brief biography', null=True, blank=True)
 
     class Meta:
         ordering = ['last_name', 'first_name']

@@ -1,0 +1,36 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Author: {{ author.first_name }} {{author.last_name}}</h1>
+
+  <br>
+  <p><strong>Biography:</strong> {{ author.biography }}</p> 
+  
+
+  {% comment %} <p><strong>Author:</strong> <a href="">{{ recipe.author }}</a></p> <!-- author detail link not yet defined --> {% endcomment %}
+  {% comment %} <p><strong>Summary:</strong> {{ recipe.summary }}</p>  {% endcomment %}
+  {% comment %} <p><strong>ISBN:</strong> {{ book.isbn }}</p> {% endcomment %}
+  {% comment %} <p><strong>Cuisine:</strong> {{ recipe.cuisine.all|join:", " }}</p> {% endcomment %}
+  {% comment %} <p><strong>Diet:</strong> {{ recipe.cuisine.all|join:", " }}</p> {% endcomment %}
+
+  <div style="margin-left:20px;margin-top:20px">
+    {% comment %} <h4>Copies</h4> {% endcomment %}
+
+    {% for recipe in author.recipe_set.all %}
+      <hr>
+      {% comment %} <p> {{ recipe.title }} </p> {% endcomment %}
+      <a href="{{ recipe.get_absolute_url }}">{{ recipe.title }}</a> 
+      {% comment %} <p class="{% if copy.status == 'a' %}text-success{% elif copy.status == 'm' %}text-danger{% else %}text-warning{% endif %}">
+        {{ copy.get_status_display }}
+      </p> {% endcomment %}
+      {% comment %} {% if copy.status != 'a' %}
+        <p><strong>Due to be returned:</strong> {{ copy.due_back }}</p>
+      {% endif %}
+      <p><strong>Imprint:</strong> {{ copy.imprint }}</p>
+      <p class="text-muted"><strong>Id:</strong> {{ copy.id }}</p> {% endcomment %}
+    {% endfor %}
+  </div>
+  <br><br>
+  <a href="{{ author.get_absolute_url }}/update">Edit</a></p> <!-- author detail link not yet defined -->
+  <a href="{{ author.get_absolute_url }}/delete">Delete</a></p> <!-- author detail link not yet defined -->
+{% endblock %}
