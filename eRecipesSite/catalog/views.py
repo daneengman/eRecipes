@@ -130,17 +130,58 @@ class QuoteUpdate(UpdateView):
         return super().post(request, *args, **kwargs)
         """
 
+def form_valid_helper(self, form):
+    # isvalid = super(RecipeCreate, self).form_valid(form)
+    # s = Subcategory.objects.get(pk=self.kwargs['subcat_id'].encode('utf-8'))
+    # this_object = self.get_object()
+    print("hello world")
+    print(self.request.POST.keys())
+    # self.object.save()
+    print(self.request.FILES)
 
+    if self.request.FILES.get('recipe_pdf'):
+        print("Now attempting to process a pdf, hahaha")
+
+        
+    # if self.request.FILES.get('recipe_photo'):
+    #     print("hello world 2")
+    #     image = form.cleaned_data['recipe_photo']
+    #     # print("hello world 2")
+    #     print("keys")
+    #     for key in form.cleaned_data:
+    #         print(key, form.cleaned_data[key])
+    #     # title = form.cleaned_data['art_title'].encode('utf-8')
+    #     # year_of_creation = form.cleaned_data['year_of_creation']
+    #     m = Recipe.objects.get_or_create(recipe_photo=image)[0]
+        # Recipe.objects.recipe_photo.add(m) # idk
+        # self.object.save()
+
+import os
+# from django import Media
 # this needs to be replaced with something more boutique
 class RecipeCreate(CreateView):
     model = Recipe
-    fields = ['title', 'author', 'description', 'cuisine', 'diet', 'last_made', 'recipe_photo']
+    fields = ['title', 'author', 'description', 'cuisine', 'diet', 'last_made', 'recipe_photo', 'recipe_pdf']
 
-    # initial = {'date_of_death': '11/06/2020'}
+    def form_valid(self, form):
+        isvalid = super(RecipeCreate, self).form_valid(form)
+        form_valid_helper(self, form)
+        return isvalid
+
+    # def post(self, request, *args, **kwargs):
+    #     # self.object = self.get_object() // what does this do
+    #     self.process_files()
+    #     return super().post(request, *args, **kwargs)
+    # # initial = {'date_of_death': '11/06/2020'}
 
 class RecipeUpdate(UpdateView):
     model = Recipe
-    fields = ['title', 'author', 'description', 'cuisine', 'diet', 'last_made', 'recipe_photo'] # Not recommended (potential security issue if more fields added)
+    fields = ['title', 'author', 'description', 'cuisine', 'diet', 'last_made', 'recipe_photo', 'recipe_pdf'] # Not recommended (potential security issue if more fields added)
+
+    def form_valid(self, form):
+        isvalid = super(RecipeUpdate, self).form_valid(form)
+        form_valid_helper(self, form)
+        return isvalid
 
 class RecipeDelete(DeleteView):
     model = Recipe

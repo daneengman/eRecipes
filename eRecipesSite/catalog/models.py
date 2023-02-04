@@ -26,32 +26,34 @@ from datetime import date
 import uuid # Required for unique book instances
 from django.db.models.functions import Upper
 import django # could improve this
+import random
 class Recipe(models.Model):
     """Model representing a recipe."""
     # id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID for this particular recipe across whole library')
 
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, default=f'testing {random.random()}')
 
     # Foreign Key used because book can only have one author, but authors can have multiple books
     # Author is a string rather than an object because it hasn't been declared yet in the file
-    author = models.ForeignKey('Author', on_delete=models.SET_NULL, null=True)
+    author = models.ForeignKey('Author', on_delete=models.SET_NULL, null=True, default=1) # default is for testing only
 
     # need to figure out ingredients and stuff...
     # later fields: ingredients (quantities? uniqueness?) last made, rating, personal notes, pictures??? 
     # uploaded, whatever else
 
-    description = models.TextField(max_length=1000, help_text='Enter a brief description of the recipe')
+    description = models.TextField(max_length=1000, help_text='Enter a brief description of the recipe', default="testing 213")
     # isbn = models.CharField('ISBN', max_length=13, unique=True,
     #                          help_text='13 Character <a href="https://www.isbn-international.org/content/what-isbn">ISBN number</a>')
 
     # ManyToManyField used because genre can contain many books. Books can cover many genres.
     # Genre class has already been defined so we can specify the object above.
-    cuisine = models.ManyToManyField(Cuisine, help_text='Select a cuisine for this recipe')
-    diet = models.ManyToManyField(Diet, help_text='Select a diet for this recipe')
+    cuisine = models.ManyToManyField(Cuisine, help_text='Select a cuisine for this recipe', default=None, blank=True)
+    diet = models.ManyToManyField(Diet, help_text='Select a diet for this recipe', default=None, blank=True)
 
     last_made = models.DateField(default=django.utils.timezone.now)
 
-    recipe_photo = models.ImageField(upload_to='static/media/recipes', null=True, blank=True)
+    recipe_photo = models.ImageField(upload_to='catalog/static/media/recipes/images', blank=True, null=True, help_text="Upload an image of the recipe here")
+    recipe_pdf = models.FileField(upload_to='catalog/static/media/recipes/pdfs', blank=True, null=True, help_text="Or, if you prefer, upload a pdf here.")
 
     words = models.JSONField(default = None, null=True, blank=True)
 
