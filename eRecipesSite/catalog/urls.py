@@ -28,3 +28,7 @@ urlpatterns += [
     path('recipe/<int:pk>/update/', views.RecipeUpdate.as_view(), name='recipe-update'),
     path('recipe/<int:pk>/delete/', views.RecipeDelete.as_view(), name='recipe-delete'),
 ]
+
+urlpatterns += [
+    path('search', views.RecipeSearch, name='search'),
+]

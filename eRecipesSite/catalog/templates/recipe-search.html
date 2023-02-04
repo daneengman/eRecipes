@@ -1,0 +1,42 @@
+
+
+{% extends "base_generic.html" %}
+
+{% block content %}
+<form action="{% url 'search' %}" method="POST">
+    {% csrf_token %} 
+    <input type="text" name="ingredients">
+    <input type="submit" name="submit" value="Search">
+</form>
+
+{% if query_name %}
+    <p>Searching for {{query_name}}</p>
+{% endif %}
+
+<h2><strong>Title search results:</h2>
+    <ul>
+{% for result in title_results %}
+<li>
+    {% comment %} <p>{{result.title}}</p> {% endcomment %}
+    <p><strong>Recipe:</strong> <a href="{{ result.get_absolute_url }}">{{ result.title }}</a></p>
+</li>
+{% endfor %}
+</ul>
+<br><br><br>
+<h2><strong>Recipe content search results:</h2>
+    <ul>
+    {% for result in words_results %}
+    <li>
+        {% comment %} <p>{{result.title}}</p> {% endcomment %}
+        <p><strong>Recipe:</strong> <a href="{{ result.get_absolute_url }}">{{ result.title }}</a></p>
+    </li>
+    {% endfor %}
+    </ul>
+{% endblock %}
+
+{% comment %} <ul>
+    {% for author in author_list %}
+      <li>
+        <a href="{{ author.get_absolute_url }}">{{ author.first_name }} {{ author.last_name }}</a> 
+      </li>
+    </ul> {% endcomment %}

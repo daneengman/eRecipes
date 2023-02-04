@@ -132,21 +132,44 @@ class QuoteUpdate(UpdateView):
 import pdf2image
 import cv2
 
+# extracts specified ingredient from recipe dict as a new singleton 
+# dictionary
+def process_word(ingredient):
+    
+    ingredient = ingredient.lower().strip()
+
+    punctuation = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+    word = ingredient
+    for c in word.lower().strip():
+        if c in punctuation:
+            word = word.replace(c, "")
+    return word
+
+# create a new dictionary that extracts ingredients from the recipe_dict
+def process_ingredients(ing_lst):
+    d = {}
+
+    for ingredient in ing_lst:
+        processed = process_word(ingredient)
+        d[processed] = d.get(processed, 0) + 1 # dict.update(process_word(ingredient, recipe_dict))
+    return d
+
 from pathlib import Path
 from django.core.files import File
+import pytesseract
 def form_valid_helper(self, form):
     # isvalid = super(RecipeCreate, self).form_valid(form)
     # s = Subcategory.objects.get(pk=self.kwargs['subcat_id'].encode('utf-8'))
     # this_object = self.get_object()
-    print("hello world")
-    print(self.request.POST.keys())
+    # print("hello world")
+    # print(self.request.POST.keys())
     # self.object.save()
-    print(self.request.FILES)
+    # print(self.request.FILES)
 
     if self.request.FILES.get('recipe_pdf'):
-        print("Now attempting to process a pdf, hahaha")
+        # print("Now attempting to process a pdf, hahaha")
         pdf_path = str(self.object.recipe_pdf)
-        print()
+        # print()
         pdf = pdf2image.convert_from_path(pdf_path)
 
         png_path_tail = os.path.splitext(os.path.split(pdf_path)[1])[0]+".png"
@@ -155,7 +178,7 @@ def form_valid_helper(self, form):
         images = []
         for i in range(len(pdf)):
             png_path = f'{png_path_head}/images/{i+1}-{png_path_tail}'
-            print("png path", png_path)
+            # print("png path", png_path)
             pdf[i].save(png_path, 'PNG')
             if i == 0:
                 # self.object.recipe_picture = f'{png_path}'
@@ -164,11 +187,19 @@ def form_valid_helper(self, form):
                 with path.open(mode='rb') as f:
                     self.object.recipe_photo = File(f)
                     self.object.save()# update_fields=['recipe_photo'])
-                    print("saved")
+                    # print("saved")
             images.append(cv2.imread(png_path))
-            print(f'{png_path}')
-            print("self pdf", self.object.recipe_pdf)
-            print("self png", self.object.recipe_photo)
+            
+
+            words = []
+            for img in images:
+                text = pytesseract.image_to_string(img)
+                words += text.split()
+            ingredient_dictionary = process_ingredients(words)
+
+            self.object.words = ingredient_dictionary
+            self.object.save()
+            # print(process_ingredients(words))
         # print(pdf_path)
         
 
@@ -221,3 +252,37 @@ class RecipeUpdate(UpdateView):
 class RecipeDelete(DeleteView):
     model = Recipe
     success_url = reverse_lazy('recipes')
+
+
+
+#models.py
+from .models import *
+#views
+
+def RecipeSearch(request):
+    """ search function  """
+    if request.method == "POST":
+        query_name = request.POST.get('ingredients', None)
+        if query_name:
+            words_results = Recipe.objects.filter(words__contains=query_name) # need to adjust this to properly filter
+            title_results = Recipe.objects.filter(title__contains=query_name)
+            context={"title_results":title_results, "words_results":words_results, "query_name":query_name}
+            return render(request, 'recipe-search.html', context=context)
+    print('didn"t find anything')
+    return render(request, 'recipe-search.html')
+    # return render(request, 'index.html', context=context)
+
+# User.objects.filter(data__campaigns__contains=[{'key': 'value'}])
+"""
+context = {
+        'num_recipes': num_recipes,
+        # 'num_instances': num_instances,
+        # 'num_instances_available': num_instances_available,
+        'num_authors': num_authors,
+        'num_cuisines': num_cuisines,
+        'num_diets': num_diets,
+    }
+
+    # Render the HTML template index.html with the data in the context variable
+    return render(request, 'index.html', context=context)
+    """

@@ -55,7 +55,7 @@ class Recipe(models.Model):
     recipe_photo = models.ImageField(upload_to='catalog/static/media/recipes/images', blank=True, null=True, help_text="Upload an image of the recipe here")
     recipe_pdf = models.FileField(upload_to='catalog/static/media/recipes/pdfs', blank=True, null=True, help_text="Or, if you prefer, upload a pdf here.")
 
-    words = models.JSONField(default = None, null=True, blank=True)
+    words = models.TextField(default = None, null=True, blank=True)
 
     class Meta:
         ordering = [Upper('title')]
