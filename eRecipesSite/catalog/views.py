@@ -129,7 +129,11 @@ class QuoteUpdate(UpdateView):
         self.my_custom_function()
         return super().post(request, *args, **kwargs)
         """
+import pdf2image
+import cv2
 
+from pathlib import Path
+from django.core.files import File
 def form_valid_helper(self, form):
     # isvalid = super(RecipeCreate, self).form_valid(form)
     # s = Subcategory.objects.get(pk=self.kwargs['subcat_id'].encode('utf-8'))
@@ -141,8 +145,39 @@ def form_valid_helper(self, form):
 
     if self.request.FILES.get('recipe_pdf'):
         print("Now attempting to process a pdf, hahaha")
+        pdf_path = str(self.object.recipe_pdf)
+        print()
+        pdf = pdf2image.convert_from_path(pdf_path)
 
+        png_path_tail = os.path.splitext(os.path.split(pdf_path)[1])[0]+".png"
+        png_path_head = os.path.split(os.path.split(pdf_path)[0])[0] # i'm sure there is a better way to do this
         
+        images = []
+        for i in range(len(pdf)):
+            png_path = f'{png_path_head}/images/{i+1}-{png_path_tail}'
+            print("png path", png_path)
+            pdf[i].save(png_path, 'PNG')
+            if i == 0:
+                # self.object.recipe_picture = f'{png_path}'
+                # self.object.save()
+                path = Path(png_path)
+                with path.open(mode='rb') as f:
+                    self.object.recipe_photo = File(f)
+                    self.object.save()# update_fields=['recipe_photo'])
+                    print("saved")
+            images.append(cv2.imread(png_path))
+            print(f'{png_path}')
+            print("self pdf", self.object.recipe_pdf)
+            print("self png", self.object.recipe_photo)
+        # print(pdf_path)
+        
+
+        # need path to jpg land
+
+        # pdf[0].save(f'{self.object.recipe_title}_cbbr_page{1}.png', 'PNG')
+        # self.object.recipe_picture = 
+
+
     # if self.request.FILES.get('recipe_photo'):
     #     print("hello world 2")
     #     image = form.cleaned_data['recipe_photo']

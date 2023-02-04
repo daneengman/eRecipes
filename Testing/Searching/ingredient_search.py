@@ -36,7 +36,7 @@ def process_ingredients(ing_lst, words):
 def pdf_to_list(path):
 
     # Initialize local path to tesseract
-    pytesseract.pytesseract.tesseract_cmd = r'/usr/local/bin/tesseract'
+    pytesseract.pytesseract.tesseract_cmd = r'/usr/local/bin/tesseract' # can i get around this
 
     # Save pages of a pdf to a series of pngs, ordered numerically
     pdf = pdf2image.convert_from_path(path)
