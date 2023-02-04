@@ -6,9 +6,11 @@
   <h2>Dynamic content</h2>
   <p>The library has the following record counts:</p>
   <ul>
-    <li><strong>Books:</strong> {{ num_books }}</li>
-    <li><strong>Copies:</strong> {{ num_instances }}</li>
-    <li><strong>Copies available:</strong> {{ num_instances_available }}</li>
+    <li><strong>Recipes:</strong> {{ num_recipes }}</li>
+    {% comment %} <li><strong>Copies:</strong> {{ num_instances }}</li> {% endcomment %}
+    {% comment %} <li><strong>Copies available:</strong> {{ num_instances_available }}</li> {% endcomment %}
     <li><strong>Authors:</strong> {{ num_authors }}</li>
+    <li><strong>Diets:</strong> {{ num_diets }}</li>
+    <li><strong>Cuisines:</strong> {{ num_cuisines }}</li>
   </ul>
 {% endblock %}

@@ -26,7 +26,7 @@ from django.urls import reverse # Used to generate URLs by reversing the URL pat
 import uuid # Required for unique book instances
 class Recipe(models.Model):
     """Model representing a recipe."""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID for this particular recipe across whole library')
+    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID for this particular recipe across whole library')
 
     title = models.CharField(max_length=200)
 
