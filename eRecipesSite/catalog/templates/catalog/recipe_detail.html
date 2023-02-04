@@ -8,7 +8,11 @@
   {% comment %} <p><strong>ISBN:</strong> {{ book.isbn }}</p> {% endcomment %}
   <p><strong>Cuisine:</strong> {{ recipe.cuisine.all|join:", " }}</p>
   <p><strong>Diet:</strong> {{ recipe.diet.all|join:", " }}</p>
-  <p><strong>Last made:</strong> {{ recipe.last_made }}</p> <br>
+  <p><strong>Last made:</strong> {{ recipe.last_made }}</p> 
+  {% if recipe.recipe_photo %}
+    <img src = "../../{{ recipe.recipe_photo }}" alt = "A photo of the recipe." width="300" height=f"{300*11/8.5}">
+  {% endif %}
+  <br><br>
   <a href="{{ recipe.get_absolute_url }}/update">Edit</a></p> <!-- author detail link not yet defined -->
   <a href="{{ recipe.get_absolute_url }}/delete">Delete</a></p> <!-- author detail link not yet defined -->
 
